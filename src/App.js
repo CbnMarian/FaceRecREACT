@@ -6,19 +6,32 @@ import Rank from "./Componenets/Rank/Rank";
 import ParticlesBg from "particles-bg";
 import "./App.css";
 
-function App() {
-  return (
-    <div className="App">
-      <ParticlesBg color="#63014e" num={200} type="cobweb" bg={true} />
-      <Navigation />
-      <Logo />
-      <Rank />
-      <ImageLinkForm />
-      {/* {<Logo/>
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      input: "",
+    };
+  }
+
+  onInputChange = (event) => {
+    console.log(event.target.value);
+  };
+
+  render() {
+    return (
+      <div className="App">
+        <ParticlesBg color="#63014e" num={200} type="cobweb" bg={true} />
+        <Navigation />
+        <Logo />
+        <Rank />
+        <ImageLinkForm onInputChange={this.onInputChange} />
+        {/* {<Logo/>
     <ImageLinkForm/>
-    <FaceRecognition/>} */}
-    </div>
-  );
+  <FaceRecognition/>} */}
+      </div>
+    );
+  }
 }
 
 export default App;
