@@ -70,14 +70,12 @@ class App extends Component {
       .then((response) => response.json())
       .then((response) => {
         console.log("hi", response);
-      })
-      .then(function (response) {
-        console.log(
-          response.outputs[0].data.regions[0].region_info.bounding_box
-        );
-
-        //ok until here
       });
+    return function (response) {
+      console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
+
+      //ok until here
+    };
   };
 
   onInputChange = (event) => {
