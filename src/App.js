@@ -88,14 +88,14 @@ class App extends Component {
     fetch(
       "https://api.clarifai.com/v2/models/" + "face-detection" + "/outputs",
       returnClarifaiRequestOptions(this.state.input)
-    ).then((response) => response.json());
-
-    return (response) => {
-      console.log("hi", response);
-      this.displayFaceBox(this.calculateFaceLocation(response));
-    };
-
-    //ok until here
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        this.displayFaceBox(this.calculateFaceLocation(data));
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
   };
 
   onRouteChange = (route) => {
