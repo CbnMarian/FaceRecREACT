@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import ParticlesBg from "particles-bg";
 import FaceRecognition from "./Componenets/FaceRecognition/FaceRecognition";
 import Navigation from "./Componenets/Navigation/Navigation";
-import Signin from "./Componenets/Signin/signin";
+import Signin from "./Componenets/Signin/signin.js";
 import Register from "./Componenets/Register/Register";
 import Logo from "./Componenets/Logo/Logo";
 import ImageLinkForm from "./Componenets/ImageLinkForm/ImageLinkForm";
@@ -57,8 +57,27 @@ class App extends Component {
       box: {},
       route: "signin",
       isSignedIn: false,
+      user: {
+        id: " ",
+        name: " ",
+        email: " ",
+        entries: 0,
+        joined: "",
+      },
     };
   }
+
+  loadUser = (data) => {
+    this.setState({
+      user: {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        entries: data.entries,
+        joined: data.joined,
+      },
+    });
+  };
 
   calculateFaceLocation = (data) => {
     const clarifaiFace =
@@ -86,12 +105,12 @@ class App extends Component {
     this.setState({ imageUrl: this.state.input });
 
     fetch(
-      "https://api.clarifai.com/v2/models/" + "face-detection" + "/outputs",
+      "https://api.clarifai.com/v2/models/face-detection/outputs",
       returnClarifaiRequestOptions(this.state.input)
     )
       .then((response) => response.json())
-      .then((data) => {
-        this.displayFaceBox(this.calculateFaceLocation(data));
+      .then((response) => {
+        this.displayFaceBox(this.calculateFaceLocation(response));
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -99,15 +118,29 @@ class App extends Component {
   };
 
   onRouteChange = (route) => {
+    console.log("Changing route to:", route);
+
     if (route === "signout") {
-      this.setState({ isSignedIn: false });
+      this.setState({ isSignedIn: false }, () => {
+        console.log("isSignedIn after update:", this.state.isSignedIn);
+        console.log("route after update:", this.state.route);
+      });
     } else if (route === "home") {
-      this.setState({ isSignedIn: true });
+      this.setState({ isSignedIn: true }, () => {
+        console.log("isSignedIn after update:", this.state.isSignedIn);
+        console.log("route after update:", this.state.route);
+      });
     }
-    this.setState({ route: route });
+
+    this.setState({ route: route }, () => {
+      console.log("isSignedIn after final update:", this.state.isSignedIn);
+      console.log("route after final update:", this.state.route);
+    });
   };
 
   render() {
+    console.log("Current route:", this.state.route);
+    console.log("isSignedIn:", this.state.isSignedIn);
     return (
       <div className="App">
         <ParticlesBg color="#63014e" num={140} type="cobweb" bg={true} />
@@ -118,7 +151,10 @@ class App extends Component {
         {this.state.route === "home" ? (
           <div>
             <Logo />
-            <Rank />
+            <Rank
+              name={this.state.user.name}
+              entries={this.state.user.entries}
+            />
             <ImageLinkForm
               onInputChange={this.onInputChange}
               onButtonSubmit={this.onButtonSubmit}
@@ -129,9 +165,12 @@ class App extends Component {
             />
           </div>
         ) : this.state.route === "signin" ? (
-          <Signin onRouteChange={this.onRouteChange} />
+          <Signin loadUser={this.loadUser} onRouteChange={this.onRouteChange} />
         ) : (
-          <Register onRouteChange={this.onRouteChange} />
+          <Register
+            loadUser={this.loadUser}
+            onRouteChange={this.onRouteChange}
+          />
         )}
       </div>
     );
